@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Página de Autos</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      overflow-x: hidden; /* Evita el scroll horizontal */
+      color: navy;
+      padding: 0px;
+      line-height: 1.6;
+      font-family: 'Roboto', sans-serif;
+      font-weight: bold;
+    }
+
+    /* Contenedor para el video de fondo */
+    .video-background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1; /* Envía el video al fondo */
+      pointer-events: none; /* Evita la interacción con el video */
+    }
+
+    /* Contenido en la parte superior del video */
+    .content {
+      position: relative;
+      z-index: 1; /* Asegura que el contenido esté por encima del video */
+      color: white; /* Cambia el color del texto */
+      text-align: center;
+      padding-top: 20px; /* Espaciado desde la parte superior */
+    }
+
+    /* Hero Section */
+    .hero {
+      height: 100vh; /* Hace que la sección hero ocupe toda la altura de la ventana */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+
+    /* Espacio para el contenido debajo de la hero section */
+    .spacer {
+      height: 60vh; /* Espacio para que puedas desplazarte hacia abajo */
+      background-color: rgba(0, 0, 0, 0.5); /* Fondo semitransparente para mejorar la legibilidad del texto */
+    }
+    .img-fluid{
+      width: 250px; /* Ajusta el ancho deseado */
+      height: 150px; /* Ajusta la altura deseada */
+      object-fit: cover; /* Mantiene la relación de aspecto, recortando si es necesario */
+    }
+
+    h1, h2, h3, h4, h6 {
+      color: white; /* Letra blanca */
+      text-shadow: -2px -2px 0 #0000FF, 2px -2px 0 #0000FF, -2px 2px 0 #0000FF, 2px 2px 0 #0000FF; /* Contorno azul */
+    }
+    h5, p{
+      color: white; /* Letra blanca */
+      text-shadow: -1px -1px 0 rgba(0, 0, 255, 0.5), 1px -1px 0 rgba(0, 0, 255, 0.5),
+      -1px 1px 0 rgba(0, 0, 255, 0.5), 1px 1px 0 rgba(0, 0, 255, 0.5);
+    }
+    /* Estilo para la tarjeta del formulario */
+    .custom-card {
+      background-color: #f8f9fa; /* Fondo claro para la tarjeta */
+      border: 1px solid #e0e0e0; /* Borde ligero */
+      border-radius: 10px; /* Borde redondeado */
+    }
+
+    /* Estilo para las entradas del formulario */
+    .custom-input, .custom-textarea {
+      border: 1px solid #007bff; /* Borde azul */
+      background-color: #ffffff; /* Fondo blanco */
+      color: #333; /* Texto oscuro */
+      border-radius: 5px; /* Bordes ligeramente redondeados */
+      transition: border-color 0.3s;
+    }
+
+    /* Cambios al hacer foco en los campos de entrada */
+    .custom-input:focus, .custom-textarea:focus {
+      border-color: #0056b3; /* Borde azul más oscuro al hacer foco */
+      box-shadow: 0 0 5px rgba(0, 91, 187, 0.5); /* Sombra azul suave */
+    }
+
+    /* Estilo personalizado para el botón */
+    .custom-button {
+      width: 150px; /* Ajusta el ancho del botón */
+      background: linear-gradient(90deg, #007bff, #0056b3); /* Gradiente azul */
+      border: none; /* Sin borde */
+      color: white; /* Texto blanco */
+      font-weight: bold; /* Texto en negrita */
+      padding: 10px; /* Espaciado interno */
+      border-radius: 10px; /* Bordes redondeados */
+      transition: background 0.3s ease-in-out, transform 0.2s ease-in-out;
+    }
+
+    /* Efecto al pasar el mouse sobre el botón */
+    .custom-button:hover {
+      background: linear-gradient(90deg, #0056b3, #004085); /* Gradiente azul más oscuro */
+      transform: scale(1.05); /* Ligero aumento de tamaño */
+    }
+
+    .blockquote {
+      border: 2px solid #007bff; /* Contorno azul */
+      padding: 20px; /* Espaciado interno para que el contenido no esté pegado al borde */
+      border-radius: 15px; /* Esquinas redondeadas */
+      margin: 20px; /* Espaciado externo */
+    }
+    .blockquote-footer {
+      color: #007bff; /* Cambia el color al que prefieras, este es un azul */
+      font-weight: bold; /* Opcional: darle un peso de fuente más fuerte */
+    }
+
+    /* Estilo para el nuevo footer */
+    .custom-footer {
+      background-color: #1a1a1a; /* Fondo oscuro para apariencia institucional */
+      color: #f8f9fa; /* Texto claro para resaltar en fondo oscuro */
+      width: 100%; /* Ocupa todo el ancho del contenedor */
+      padding: 20px 0; /* Espaciado arriba y abajo */
+      margin: 0; /* Sin margen para evitar flotación */
+      box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.3); /* Sombra superior para un diseño innovador */
+      position: relative; /* Asegura que el footer se comporte correctamente */
+      bottom: 0; /* Asegura que el footer esté al final de la página */
+    }
+
+    /* Estilo para el contenido dentro del footer */
+    .footer-content {
+      max-width: 1200px; /* Limitar el ancho del contenido */
+      margin: 0 auto; /* Centrar el contenido */
+      text-align: center; /* Centrar texto */
+      padding: 0 15px; /* Espaciado horizontal para dispositivos pequeños */
+    }
+
+    /* Estilo para el link de correo electrónico */
+    .footer-link {
+      color: #007bff; /* Azul corporativo */
+      text-decoration: none; /* Sin subrayado */
+      font-weight: bold; /* Texto en negrita */
+      transition: color 0.3s ease-in-out;
+    }
+
+    .footer-link:hover {
+      color: #66b2ff; /* Color más claro al pasar el mouse */
+    }
+
+    /* Efecto de hover sobre el footer */
+    .custom-footer:hover {
+      background-color: #292929; /* Fondo ligeramente más claro al pasar el mouse */
+      transition: background-color 0.3s ease-in-out;
+    }
+
+    /* Adaptación para pantallas pequeñas */
+    @media (max-width: 768px) {
+      .custom-footer {
+        padding: 15px 0; /* Reducir el espaciado en dispositivos pequeños */
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Contenedor para el video de YouTube -->
+<div id="player" class="video-background"></div>
+
+<!-- Contenido en la parte superior del video -->
+<div class="content">
+  <h1></h1>
+</div>
+
+<script>
+  // Cargar la API de YouTube
+  const tag = document.createElement('script');
+  tag.src = "https://www.youtube.com/iframe_api";
+  const firstScriptTag = document.getElementsByTagName('script')[0];
+  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+  let player;
+  const videoId = 'Nlp-LF3U9AI'; // ID del video que deseas reproducir
+  const startTime = 1; // Tiempo en segundos desde donde quieres que comience el video
+
+  // Crear el reproductor de YouTube
+  function onYouTubeIframeAPIReady() {
+    player = new YT.Player('player', {
+      height: '100%',
+      width: '100%',
+      videoId: videoId,
+      playerVars: {
+        'autoplay': 1,
+        'controls': 0, // Ocultar controles
+        'start': startTime,
+        'loop': 1, // Habilitar bucle
+        'playlist': videoId, // Requerido para el bucle
+        'mute': 1, // Muteo para permitir autoplay
+        'showinfo': 0, // Ocultar información del video
+        'rel': 0 // Evitar mostrar videos relacionados al final
+      },
+      events: {
+        'onReady': onPlayerReady
+      }
+    });
+  }
+
+  // Función que se llama cuando el reproductor está listo
+  function onPlayerReady(event) {
+    event.target.playVideo(); // Iniciar reproducción automática
+  }
+</script>
+
+<div th:replace="fragments/header :: header"></div>
+
+<!-- Hero Section -->
+<div class="hero">
+  <h1>Descubre Tu Próximo Auto</h1>
+  <p>Los mejores modelos de autos a tu disposición.</p>
+</div>
+
+
+<div class="spacer">
+  <div class="container mt-5">
+    <h2 class="text-center">Marcas de Autos que Trabajamos</h2>
+    <br>
+    <div class="row text-center">
+      <div class="col-md-3">
+        <img src="/images/ford1.png" alt="Marca 1" class="img-fluid">
+      </div>
+      <div class="col-md-3">
+        <img src="/images/toyotaa.png" alt="Marca 2" class="img-fluid">
+      </div>
+      <div class="col-md-3">
+        <img src="/images/mercedes.png" alt="Marca 3" class="img-fluid">
+      </div>
+      <div class="col-md-3">
+        <img src="/images/Tesla.png" alt="Marca 4" class="img-fluid" style="width: 175px; height: auto;">
+      </div>
+      <div class="col-md-3">
+        <img src="/images/bmwlogo.png" alt="Marca 5" class="img-fluid">
+      </div>
+      <div class="col-md-3">
+        <img src="/images/nissan.png" alt="Marca 6" class="img-fluid">
+      </div>
+      <div class="col-md-3">
+        <img src="/images/audi.png" alt="Marca 7" class="img-fluid">
+      </div>
+      <div class="col-md-3">
+        <img src="/images/volvo1.png" alt="Marca 8" class="img-fluid">
+      </div>
+      <div class="col-md-3">
+        <img src="/images/Hyundai.png" alt="Marca 9" class="img-fluid">
+      </div>
+      <div class="col-md-3">
+        <img src="/images/subaru.png" alt="Marca 10" class="img-fluid">
+      </div>
+      <div class="col-md-3">
+        <img src="/images/mazda1.png" alt="Marca 11" class="img-fluid" style="width: 180px; height: auto;">
+      </div>
+      <div class="col-md-3">
+        <img src="/images/Suzuki.png" alt="Marca 12" class="img-fluid">
+      </div>
+    </div>
+  </div>
+</div> <!-- Espacio para desplazarse -->
+
+<br>
+
+<!-- Featured Cars Section -->
+<div class="container mt-5">
+  <center><h2>Autos Destacados</h2></center>
+  <div class="row">
+    <div class="col-md-4">
+      <div class="card d-flex flex-column" style="height: 100%;">
+        <img src="https://th.bing.com/th/id/R.4bc182a00d180c78dbddf5f22c496feb?rik=DJUoc%2bnTeJnYYQ&riu=http%3a%2f%2fcdn.bmwblog.com%2fwp-content%2fuploads%2f2016%2f02%2fBMW-M4-GTS-Chicago-Auto-Show-2.jpg&ehk=R2jkJ9PUhXV9AEZB3RU%2f6zOsBUDTOJZkMQzBjJd6sQ8%3d&risl=&pid=ImgRaw&r=0" class="card-img-top" alt="Auto 1" width="100%" height="225">
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title">BMW M4 GTS</h5>
+          <p class="card-text flex-grow-1">El BMW M4 GTS es un modelo especial del BMW M4, que destaca por su enfoque en la pista y su rendimiento extremo. Este vehículo de alto rendimiento combina la elegancia característica de BMW con una tecnología innovadora y un diseño audaz.</p>
+          <a href="listarCochesemi" class="btn btn-primary">Más Información</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card d-flex flex-column" style="height: 100%;">
+        <img src="https://sportauto.autojournal.fr/wp-content/uploads/sportauto/2022/11/ferrari_vision_gt_05-750x410.jpg" class="card-img-top" alt="Auto 2" width="100%" height="225">
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title">Ferrari VGT</h5>
+          <p class="card-text flex-grow-1">El Ferrari Vision Gran Turismo es un impresionante y potente superdeportivo diseñado específicamente para el videojuego Gran Turismo 7 (GT7). Este automóvil, que forma parte de la colección Vision Gran Turismo, destaca por su diseño futurista y su enfoque en la velocidad y el rendimiento.</p>
+          <a href="listarCochesemi" class="btn btn-primary">Más Información</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card d-flex flex-column" style="height: 100%;">
+        <img src="https://images8.alphacoders.com/487/487147.jpg" class="card-img-top" alt="Auto 3" width="100%" height="225">
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title">Mercedes-Benz AMG</h5>
+          <p class="card-text flex-grow-1">El Mercedes-Benz AMG Vision Gran Turismo es un concepto de superdeportivo creado para el videojuego Gran Turismo 6, que ha cautivado a los entusiastas de los automóviles y los videojuegos. Este vehículo, diseñado para representar el futuro de la marca Mercedes-AMG, combina un diseño audaz con un rendimiento impresionante.</p>
+          <a href="listarCochesemi" class="btn btn-primary">Más Información</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Contact Form Section -->
+<div class="container mt-5">
+  <h2 class="text-center mb-4">Contáctanos</h2>
+  <div class="card shadow custom-card">
+    <div class="card-body">
+      <form>
+        <div class="mb-3">
+          <label for="name" class="form-label">Nombre</label>
+          <input type="text" class="form-control custom-input" id="name" placeholder="Tu nombre" required>
+        </div>
+        <div class="mb-3">
+          <label for="email" class="form-label">Correo Electrónico</label>
+          <input type="email" class="form-control custom-input" id="email" placeholder="tu.email@ejemplo.com" required>
+        </div>
+        <div class="mb-3">
+          <label for="message" class="form-label">Mensaje</label>
+          <textarea class="form-control custom-textarea" id="message" rows="4" placeholder="Escribe tu mensaje aquí..." required></textarea>
+        </div>
+        <center><a href="formCliente" class="btn btn-primary custom-button">Enviar</a></center>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Testimonials Section -->
+<div class="container mt-5">
+  <center><h2>Testimonios</h2></center>
+  <div class="row">
+    <div class="col-md-4">
+      <blockquote class="blockquote text-center">
+        <img src="https://th.bing.com/th/id/OIP.aKiay--qs4cPSgLUgFyPbwHaJQ?rs=1&pid=ImgDetMain" alt="Cliente 1" class="rounded-circle" width="100" height="100">
+        <p class="mb-0">"La mejor experiencia de compra de un auto que he tenido!"</p>
+        <br>
+        <br>
+        <footer class="blockquote-footer">Cliente 1</footer>
+      </blockquote>
+    </div>
+    <div class="col-md-4">
+      <blockquote class="blockquote text-center">
+        <img src="https://i.pinimg.com/originals/50/8a/59/508a59707e76feb398bb22b2b62d288a.jpg" alt="Cliente 2" class="rounded-circle" width="100" height="100">
+        <p class="mb-0">"Servicio al cliente excepcional y excelentes modelos."</p>
+        <br>
+        <br>
+        <footer class="blockquote-footer">Cliente 2</footer>
+      </blockquote>
+    </div>
+    <div class="col-md-4">
+      <blockquote class="blockquote text-center">
+        <img src="https://profile-images.xing.com/images/3bceb998f052a583d4ad56a8be929e9b-4/timo-raub.1024x1024.jpg" alt="Cliente 3" class="rounded-circle" width="100" height="100">
+        <p class="mb-0">"Recomiendo MotorMarket a todos mis amigos."</p>
+        <br>
+        <br>
+        <footer class="blockquote-footer">Cliente 3</footer>
+      </blockquote>
+    </div>
+  </div>
+</div>
+
+<div class="container text-center mt-5">
+  <h2>¡Explora más autos increíbles!</h2>
+  <p>Descubre nuestra amplia gama de vehículos y encuentra el auto de tus sueños.</p>
+
+</div>
+
+<!-- Footer -->
+<footer class="custom-footer">
+  <div class="footer-content">
+    <p>© 2024 MotorMarket. Todos los derechos reservados.</p>
+    <a href="mailto:info@motormarket.com" class="footer-link">info@motormarket.com</a>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
