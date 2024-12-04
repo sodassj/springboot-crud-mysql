@@ -88,6 +88,4 @@ public class ClienteController {
 
         return "cliente/ver";
     }
-
-
 }
